@@ -3,6 +3,7 @@ const Comment = require('../models/Comment');
 const logger = require('../utils/logger');
 const { cacheGet, cacheSet, cacheDelete } = require('../cache/redis');
 const { emitTaskUpdate } = require('../websocket/handler');
+const notificationService = require('../services/notificationService');
 
 class TaskController {
   async createTask(req, res) {
@@ -23,6 +24,16 @@ class TaskController {
 
       // Log task creation activity
       await Comment.logActivity(task.id, userId, 'task_created');
+
+      // Send notification if assigned to someone else
+      if (assignedTo && assignedTo !== userId) {
+        await notificationService.notifyTaskAssignment(
+          task.id,
+          task.title,
+          assignedTo,
+          userId
+        );
+      }
 
       await cacheDelete(`user:${userId}:tasks`);
       emitTaskUpdate('task:created', task);
@@ -122,8 +133,26 @@ class TaskController {
           newStatus: updates.status
         });
 
+        // Notify about status change
+        await notificationService.notifyTaskStatusChange(
+          id,
+          task.title,
+          updates.status,
+          userId,
+          task.createdBy,
+          task.assignedTo
+        );
+
         if (updates.status === 'completed') {
           await Comment.logActivity(id, userId, 'task_completed');
+
+          // Notify task creator about completion
+          await notificationService.notifyTaskCompleted(
+            id,
+            task.title,
+            userId,
+            task.createdBy
+          );
         }
       }
 
@@ -138,6 +167,14 @@ class TaskController {
         await Comment.logActivity(id, userId, 'assigned', {
           assigneeName: 'User'
         });
+
+        // Notify new assignee
+        await notificationService.notifyTaskAssignment(
+          id,
+          task.title,
+          updates.assignedTo,
+          userId
+        );
       }
 
       if (updates.dueDate && updates.dueDate !== task.dueDate) {
