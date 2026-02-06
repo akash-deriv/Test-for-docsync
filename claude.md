@@ -86,6 +86,12 @@ Models act as repositories, encapsulating all database queries. This separates d
 ### Middleware Chain
 Authentication middleware validates tokens and attaches user data to requests, making it available in all protected routes.
 
+### Service Pattern
+Business logic is encapsulated in service classes, making it reusable across different controllers and improving testability.
+
+### Event-Driven Architecture
+WebSocket notifications use an event system to decouple event generation from delivery, enabling better scalability.
+
 ## Common Development Tasks
 
 ### Adding a New Endpoint
@@ -131,6 +137,19 @@ socket.on('task:created', (data) => {
 - Invalidate caches on mutations
 - Consider cache warming for frequently accessed data
 
+### Database Optimization
+- Use connection pooling for database connections
+- Implement database query timeouts to prevent long-running queries
+- Use parameterized queries to prevent SQL injection and improve performance
+- Consider read replicas for high-traffic deployments
+
+## API Rate Limiting
+
+- Anonymous requests: 60 requests per hour
+- Authenticated requests: 1000 requests per hour
+- Admin users: 5000 requests per hour
+- Implement exponential backoff in clients for rate limit handling
+
 ## Security Notes
 
 ### Password Requirements
@@ -145,6 +164,13 @@ Enforced in validators:
 - Store JWT_SECRET securely (use environment variables)
 - Rotate secrets periodically in production
 - Implement token blacklisting for logout (future enhancement)
+
+### OWASP Security Practices
+- Implement CSRF protection on all state-changing endpoints
+- Set secure and HttpOnly flags for cookies
+- Use Helmet.js to set security headers
+- Implement proper content security policy
+- Sanitize all user input to prevent XSS attacks
 
 ## Known Limitations
 
@@ -223,6 +249,10 @@ Set log level with `LOG_LEVEL` environment variable.
 - Comment complex business logic
 - Handle errors at controller level
 - Log important events and errors
+- Use ESLint with Airbnb style guide
+- Maintain consistent indentation (2 spaces)
+- Limit function length to 25 lines maximum
+- Use JSDoc comments for all public functions
 
 ## Dependencies Overview
 

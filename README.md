@@ -201,6 +201,10 @@ src/
 4. Push to the branch
 5. Create a Pull Request
 
+## Claude AI Integration
+
+For additional information about Claude AI integration with this project, please refer to the `claude.md` file in the repository. This file contains detailed information about AI-powered features and additional rules for Claude integration.
+
 ## License
 
 MIT License
