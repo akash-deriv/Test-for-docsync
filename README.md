@@ -10,6 +10,8 @@ A comprehensive RESTful API for task management with real-time updates, authenti
 
 - **Comments & Activity Tracking**: Add comments to tasks and track activity history. The system maintains a detailed audit trail of all changes, supporting rich text formatting in comments, @mentions, and file attachments up to 10MB.
 
+- **Task Templates**: Create and manage reusable templates for common task types. Templates include predefined titles, descriptions, checklists, priority levels, and tags. Public templates can be shared across users, while usage statistics track template popularity.
+
 - **Real-time Updates**: WebSocket support for live task updates across clients. Users receive instantaneous notifications for relevant changes with intelligent event batching to prevent notification fatigue. The system handles reconnection gracefully with missed event synchronization.
 
 - **Caching Layer**: Redis integration for improved performance. The caching strategy includes intelligent invalidation, time-based expiration policies, and prioritizes frequently accessed data with configurable memory limits.
@@ -100,6 +102,17 @@ A comprehensive RESTful API for task management with real-time updates, authenti
 - `GET /api/tasks/:taskId/activity` - Get task activity log
 - `PUT /api/tasks/:taskId/comments/:commentId` - Update comment
 - `DELETE /api/tasks/:taskId/comments/:commentId` - Delete comment
+
+### Templates
+- `POST /api/templates` - Create a new template
+- `GET /api/templates` - Get all templates
+- `GET /api/templates/:id` - Get template by ID
+- `PUT /api/templates/:id` - Update template
+- `DELETE /api/templates/:id` - Delete template
+- `POST /api/templates/:id/use` - Create task from template
+- `POST /api/templates/:id/duplicate` - Duplicate a template
+- `GET /api/templates/search` - Search templates
+- `GET /api/templates/public` - Get public templates
 
 ### Users
 - `GET /api/users/profile` - Get user profile
