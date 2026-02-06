@@ -1,0 +1,30 @@
+{
+  "name": "taskflow-api",
+  "version": "1.0.0",
+  "description": "A comprehensive task management API with authentication, real-time notifications, and analytics",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest --coverage",
+    "lint": "eslint src/**/*.js",
+    "migrate": "node src/database/migrate.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "pg": "^8.11.3",
+    "redis": "^4.6.10",
+    "socket.io": "^4.6.2",
+    "dotenv": "^16.3.1",
+    "joi": "^17.11.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.1",
+    "eslint": "^8.52.0",
+    "supertest": "^6.3.3"
+  }
+}
