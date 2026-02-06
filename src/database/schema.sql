@@ -105,3 +105,45 @@ CREATE TABLE IF NOT EXISTS attachments (
 CREATE INDEX idx_attachments_task_id ON attachments(task_id);
 CREATE INDEX idx_attachments_user_id ON attachments(user_id);
 CREATE INDEX idx_attachments_created_at ON attachments(created_at);
+
+-- Templates Table
+CREATE TABLE IF NOT EXISTS templates (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    title VARCHAR(255) NOT NULL,
+    task_description TEXT,
+    priority VARCHAR(20) CHECK (priority IN ('low', 'medium', 'high', 'urgent')) DEFAULT 'medium',
+    tags VARCHAR(50)[],
+    checklist_items JSONB DEFAULT '[]',
+    is_public BOOLEAN DEFAULT false,
+    usage_count INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_templates_user_id ON templates(user_id);
+CREATE INDEX idx_templates_is_public ON templates(is_public);
+CREATE INDEX idx_templates_usage_count ON templates(usage_count);
+CREATE INDEX idx_templates_created_at ON templates(created_at);
+CREATE INDEX idx_templates_name ON templates(name);
+
+-- Template Usage Tracking Table
+CREATE TABLE IF NOT EXISTS template_usage (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    template_id UUID NOT NULL REFERENCES templates(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    task_id UUID REFERENCES tasks(id) ON DELETE SET NULL,
+    used_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX idx_template_usage_template_id ON template_usage(template_id);
+CREATE INDEX idx_template_usage_user_id ON template_usage(user_id);
+CREATE INDEX idx_template_usage_used_at ON template_usage(used_at);
+
+-- Update trigger for templates
+CREATE TRIGGER update_templates_updated_at
+    BEFORE UPDATE ON templates
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();

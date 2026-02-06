@@ -117,6 +117,8 @@ class Comment {
         return `uploaded ${metadata.count} file(s): ${metadata.files}`;
       case 'file_deleted':
         return `deleted file: ${metadata.fileName}`;
+      case 'task_created_from_template':
+        return `created this task from template: ${metadata.templateName}`;
       default:
         return `performed action: ${action}`;
     }

@@ -10,6 +10,7 @@ const analyticsRoutes = require('./routes/analytics');
 const commentRoutes = require('./routes/comments');
 const notificationRoutes = require('./routes/notifications');
 const attachmentRoutes = require('./routes/attachments');
+const templateRoutes = require('./routes/templates');
 const { errorHandler } = require('./middleware/errorHandler');
 const { connectDatabase } = require('./database/connection');
 const { initializeRedis } = require('./cache/redis');
@@ -28,6 +29,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/templates', templateRoutes);
 app.use('/api', attachmentRoutes);
 app.use('/api', commentRoutes);
 
