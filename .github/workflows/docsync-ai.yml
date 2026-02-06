@@ -1,0 +1,60 @@
+# ============================================================================
+# DocSync AI Workflow Example - CORRECTED VERSION
+# ============================================================================
+# Place this file in your repository at: .github/workflows/docsync-ai.yml
+# ============================================================================
+
+name: 📚 DocSync AI Documentation
+
+on:
+  # Trigger 1: When a PR is merged to master/main
+  pull_request:
+    types: [closed]
+    branches:
+      - master  # Change to 'main' if your default branch is 'main'
+
+  # Trigger 2: When someone comments on a PR
+  issue_comment:
+    types: [created]
+
+# Required permissions
+permissions:
+  contents: write        # To create branches and push changes
+  pull-requests: write   # To create and update PRs
+
+jobs:
+  # ============================================================================
+  # JOB 1: Auto-create documentation PR when code PR is merged
+  # ============================================================================
+  docsync-on-merge:
+    name: 📚 Create Documentation PR
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged == true
+    uses: akash-deriv/shared-actions/.github/workflows/docsync-ai.yml@master
+    with:
+      trigger_type: 'merge'
+      base_branch: 'master'
+      pr_labels: 'documentation,automated,docsync-ai'
+      repository_owner: 'U0AA8EH0QD8'
+    secrets:
+      DOCSYNC_GITHUB_TOKEN: ${{ secrets.DOCSYNC_GITHUB_TOKEN }}
+      DOCSYNC_ANTHROPIC_API_KEY: ${{ secrets.DOCSYNC_ANTHROPIC_API_KEY }}
+      DOCSYNC_SLACK_WEBHOOK: ${{ secrets.DOCSYNC_SLACK_WEBHOOK }}
+
+  # ============================================================================
+  # JOB 2: Update documentation based on PR comments
+  # ============================================================================
+  docsync-on-comment:
+    name: 💬 Update Documentation from Comment
+    if: |
+      github.event_name == 'issue_comment' &&
+      github.event.issue.pull_request != null &&
+      startsWith(github.event.comment.body, 'docsync:')
+    uses: akash-deriv/shared-actions/.github/workflows/docsync-ai.yml@master
+    with:
+      trigger_type: 'comment'
+      base_branch: 'master'
+      comment_body: ${{ github.event.comment.body }}
+      comment_pr_number: ${{ github.event.issue.number }}
+    secrets:
+      DOCSYNC_GITHUB_TOKEN: ${{ secrets.DOCSYNC_GITHUB_TOKEN }}
+      DOCSYNC_ANTHROPIC_API_KEY: ${{ secrets.DOCSYNC_ANTHROPIC_API_KEY }}
