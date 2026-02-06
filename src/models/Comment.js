@@ -113,6 +113,10 @@ class Comment {
         return 'marked task as completed';
       case 'task_reopened':
         return 'reopened this task';
+      case 'files_uploaded':
+        return `uploaded ${metadata.count} file(s): ${metadata.files}`;
+      case 'file_deleted':
+        return `deleted file: ${metadata.fileName}`;
       default:
         return `performed action: ${action}`;
     }
