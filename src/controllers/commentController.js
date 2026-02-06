@@ -3,6 +3,7 @@ const Task = require('../models/Task');
 const logger = require('../utils/logger');
 const { cacheDelete } = require('../cache/redis');
 const { emitCommentUpdate } = require('../websocket/handler');
+const notificationService = require('../services/notificationService');
 
 class CommentController {
   async createComment(req, res) {
@@ -30,6 +31,16 @@ class CommentController {
         content: content.trim(),
         type: 'comment'
       });
+
+      // Notify task participants about new comment
+      await notificationService.notifyNewComment(
+        taskId,
+        task.title,
+        content.trim(),
+        userId,
+        task.createdBy,
+        task.assignedTo
+      );
 
       await cacheDelete(`task:${taskId}:comments`);
       emitCommentUpdate('comment:created', comment);
