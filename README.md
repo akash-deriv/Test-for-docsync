@@ -6,6 +6,7 @@ A comprehensive RESTful API for task management with real-time updates, authenti
 
 - **User Authentication**: Secure JWT-based authentication with refresh tokens
 - **Task Management**: Full CRUD operations for tasks with filtering, search, and pagination
+- **Comments & Activity Tracking**: Add comments to tasks and track activity history
 - **Real-time Updates**: WebSocket support for live task updates across clients
 - **Caching Layer**: Redis integration for improved performance
 - **Analytics**: Track task completion rates, productivity metrics, and user statistics
@@ -84,6 +85,13 @@ A comprehensive RESTful API for task management with real-time updates, authenti
 - `PUT /api/tasks/:id` - Update task
 - `DELETE /api/tasks/:id` - Delete task
 
+### Comments & Activity
+- `POST /api/tasks/:taskId/comments` - Create comment
+- `GET /api/tasks/:taskId/comments` - Get task comments
+- `GET /api/tasks/:taskId/activity` - Get task activity log
+- `PUT /api/tasks/:taskId/comments/:commentId` - Update comment
+- `DELETE /api/tasks/:taskId/comments/:commentId` - Delete comment
+
 ### Users
 - `GET /api/users/profile` - Get user profile
 - `PUT /api/users/profile` - Update user profile
@@ -107,6 +115,22 @@ const socket = io('http://localhost:3000', {
 - `task:created` - Emitted when a new task is created
 - `task:updated` - Emitted when a task is updated
 - `task:deleted` - Emitted when a task is deleted
+- `comment:created` - Emitted when a new comment is added
+- `comment:updated` - Emitted when a comment is updated
+- `comment:deleted` - Emitted when a comment is deleted
+
+### Subscribing to Real-time Updates
+```javascript
+// Subscribe to task updates
+socket.emit('subscribe:task', taskId);
+
+// Subscribe to comment updates
+socket.emit('subscribe:comments', taskId);
+
+// Unsubscribe when no longer needed
+socket.emit('unsubscribe:task', taskId);
+socket.emit('unsubscribe:comments', taskId);
+```
 
 ## Testing
 
