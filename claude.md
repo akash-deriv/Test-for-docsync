@@ -49,6 +49,32 @@ created_at: TIMESTAMP
 updated_at: TIMESTAMP
 ```
 
+#### Templates Table
+```sql
+id: UUID (primary key)
+user_id: UUID (foreign key -> users.id)
+name: VARCHAR(255)
+description: TEXT
+title: VARCHAR(255)
+task_description: TEXT
+priority: ENUM('low', 'medium', 'high', 'urgent')
+tags: VARCHAR[] (array)
+checklist_items: JSONB
+is_public: BOOLEAN
+usage_count: INTEGER
+created_at: TIMESTAMP
+updated_at: TIMESTAMP
+```
+
+#### Template Usage Table
+```sql
+id: UUID (primary key)
+template_id: UUID (foreign key -> templates.id)
+user_id: UUID (foreign key -> users.id)
+task_id: UUID (foreign key -> tasks.id)
+used_at: TIMESTAMP
+```
+
 ## Key Design Patterns
 
 ### Controller Pattern
@@ -182,6 +208,12 @@ Set log level with `LOG_LEVEL` environment variable.
 - Test connection/disconnection
 - Test event emission
 - Test authentication
+
+### Template Tests
+- Test template creation and validation
+- Test template usage tracking
+- Test task creation from templates
+- Test public vs. private template access
 
 ## Code Style
 
