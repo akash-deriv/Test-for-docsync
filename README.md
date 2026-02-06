@@ -10,6 +10,8 @@ A comprehensive RESTful API for task management with real-time updates, authenti
 
 - **Comments & Activity Tracking**: Add comments to tasks and track activity history. The system maintains a detailed audit trail of all changes, supporting rich text formatting in comments, @mentions, and file attachments up to 10MB.
 
+- **File Attachments**: Upload, download, and manage files attached to tasks. The system supports multiple file types including documents, images, and archives with automatic file type validation and security checks.
+
 - **Real-time Updates**: WebSocket support for live task updates across clients. Users receive instantaneous notifications for relevant changes with intelligent event batching to prevent notification fatigue. The system handles reconnection gracefully with missed event synchronization.
 
 - **Caching Layer**: Redis integration for improved performance. The caching strategy includes intelligent invalidation, time-based expiration policies, and prioritizes frequently accessed data with configurable memory limits.
@@ -35,6 +37,7 @@ A comprehensive RESTful API for task management with real-time updates, authenti
 - **Password Hashing**: bcryptjs
 - **Logging**: Winston
 - **Testing**: Jest & Supertest
+- **File Handling**: Multer
 
 ## Getting Started
 
@@ -101,6 +104,13 @@ A comprehensive RESTful API for task management with real-time updates, authenti
 - `PUT /api/tasks/:taskId/comments/:commentId` - Update comment
 - `DELETE /api/tasks/:taskId/comments/:commentId` - Delete comment
 
+### Attachments
+- `POST /api/tasks/:taskId/attachments` - Upload files to task
+- `GET /api/tasks/:taskId/attachments` - Get task attachments
+- `GET /api/tasks/:taskId/attachments/:attachmentId/download` - Download attachment
+- `DELETE /api/tasks/:taskId/attachments/:attachmentId` - Delete attachment
+- `GET /api/user/attachments` - Get user's recent attachments
+
 ### Users
 - `GET /api/users/profile` - Get user profile
 - `PUT /api/users/profile` - Update user profile
@@ -127,6 +137,8 @@ const socket = io('http://localhost:3000', {
 - `comment:created` - Emitted when a new comment is added
 - `comment:updated` - Emitted when a comment is updated
 - `comment:deleted` - Emitted when a comment is deleted
+- `attachments:uploaded` - Emitted when files are uploaded to a task
+- `attachment:deleted` - Emitted when an attachment is deleted
 
 ### Subscribing to Real-time Updates
 ```javascript
@@ -172,6 +184,7 @@ src/
 - SQL injection prevention
 - Rate limiting
 - CORS configuration
+- File type validation and security checks
 
 ## Performance Optimizations
 
