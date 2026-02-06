@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth');
 const taskRoutes = require('./routes/tasks');
 const userRoutes = require('./routes/users');
 const analyticsRoutes = require('./routes/analytics');
+const commentRoutes = require('./routes/comments');
 const { errorHandler } = require('./middleware/errorHandler');
 const { connectDatabase } = require('./database/connection');
 const { initializeRedis } = require('./cache/redis');
@@ -24,6 +25,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api', commentRoutes);
 
 // Error handling
 app.use(errorHandler);

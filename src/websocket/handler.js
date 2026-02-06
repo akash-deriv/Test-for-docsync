@@ -33,6 +33,16 @@ function setupWebSocket(socketIO) {
       logger.debug(`User ${socket.userId} unsubscribed from task ${taskId}`);
     });
 
+    socket.on('subscribe:comments', (taskId) => {
+      socket.join(`task:${taskId}:comments`);
+      logger.debug(`User ${socket.userId} subscribed to comments on task ${taskId}`);
+    });
+
+    socket.on('unsubscribe:comments', (taskId) => {
+      socket.leave(`task:${taskId}:comments`);
+      logger.debug(`User ${socket.userId} unsubscribed from comments on task ${taskId}`);
+    });
+
     socket.on('disconnect', () => {
       logger.info(`WebSocket client disconnected: ${socket.userId}`);
     });
@@ -51,8 +61,22 @@ function emitToUser(userId, event, data) {
   }
 }
 
+function emitCommentUpdate(event, data) {
+  if (io && data.taskId) {
+    io.to(`task:${data.taskId}:comments`).emit(event, data);
+  }
+}
+
+function emitToTask(taskId, event, data) {
+  if (io) {
+    io.to(`task:${taskId}`).emit(event, data);
+  }
+}
+
 module.exports = {
   setupWebSocket,
   emitTaskUpdate,
   emitToUser,
+  emitCommentUpdate,
+  emitToTask,
 };

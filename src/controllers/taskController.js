@@ -1,4 +1,5 @@
 const Task = require('../models/Task');
+const Comment = require('../models/Comment');
 const logger = require('../utils/logger');
 const { cacheGet, cacheSet, cacheDelete } = require('../cache/redis');
 const { emitTaskUpdate } = require('../websocket/handler');
@@ -19,6 +20,9 @@ class TaskController {
         createdBy: userId,
         assignedTo: assignedTo || userId,
       });
+
+      // Log task creation activity
+      await Comment.logActivity(task.id, userId, 'task_created');
 
       await cacheDelete(`user:${userId}:tasks`);
       emitTaskUpdate('task:created', task);
@@ -110,6 +114,37 @@ class TaskController {
       }
 
       const updatedTask = await Task.update(id, updates);
+
+      // Log activity for specific changes
+      if (updates.status && updates.status !== task.status) {
+        await Comment.logActivity(id, userId, 'status_changed', {
+          oldStatus: task.status,
+          newStatus: updates.status
+        });
+
+        if (updates.status === 'completed') {
+          await Comment.logActivity(id, userId, 'task_completed');
+        }
+      }
+
+      if (updates.priority && updates.priority !== task.priority) {
+        await Comment.logActivity(id, userId, 'priority_changed', {
+          oldPriority: task.priority,
+          newPriority: updates.priority
+        });
+      }
+
+      if (updates.assignedTo && updates.assignedTo !== task.assignedTo) {
+        await Comment.logActivity(id, userId, 'assigned', {
+          assigneeName: 'User'
+        });
+      }
+
+      if (updates.dueDate && updates.dueDate !== task.dueDate) {
+        await Comment.logActivity(id, userId, 'due_date_changed', {
+          newDueDate: updates.dueDate
+        });
+      }
 
       await cacheDelete(`user:${userId}:tasks`);
       emitTaskUpdate('task:updated', updatedTask);
