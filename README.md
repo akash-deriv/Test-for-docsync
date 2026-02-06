@@ -12,6 +12,8 @@ A comprehensive RESTful API for task management with real-time updates, authenti
 
 - **Real-time Updates**: WebSocket support for live task updates across clients. Users receive instantaneous notifications for relevant changes with intelligent event batching to prevent notification fatigue. The system handles reconnection gracefully with missed event synchronization.
 
+- **Notifications System**: Comprehensive notification system keeps users informed about relevant activities. Users receive alerts for task assignments, status changes, comments, mentions, and upcoming due dates. Notifications can be marked as read individually or in bulk.
+
 - **Caching Layer**: Redis integration for improved performance. The caching strategy includes intelligent invalidation, time-based expiration policies, and prioritizes frequently accessed data with configurable memory limits.
 
 - **Analytics**: Track task completion rates, productivity metrics, and user statistics. The analytics engine provides customizable dashboards, exportable reports in multiple formats, and trend analysis with predictive insights.
@@ -101,6 +103,14 @@ A comprehensive RESTful API for task management with real-time updates, authenti
 - `PUT /api/tasks/:taskId/comments/:commentId` - Update comment
 - `DELETE /api/tasks/:taskId/comments/:commentId` - Delete comment
 
+### Notifications
+- `GET /api/notifications` - Get user notifications (with pagination)
+- `GET /api/notifications/unread-count` - Get unread notification count
+- `PUT /api/notifications/:id/read` - Mark notification as read
+- `PUT /api/notifications/read-all` - Mark all notifications as read
+- `DELETE /api/notifications/:id` - Delete notification
+- `DELETE /api/notifications` - Delete all notifications
+
 ### Users
 - `GET /api/users/profile` - Get user profile
 - `PUT /api/users/profile` - Update user profile
@@ -127,6 +137,7 @@ const socket = io('http://localhost:3000', {
 - `comment:created` - Emitted when a new comment is added
 - `comment:updated` - Emitted when a comment is updated
 - `comment:deleted` - Emitted when a comment is deleted
+- `notification:new` - Emitted when a new notification is created
 
 ### Subscribing to Real-time Updates
 ```javascript
@@ -161,6 +172,7 @@ src/
 ├── database/        # Database connection and migrations
 ├── cache/           # Redis cache management
 ├── websocket/       # WebSocket handlers
+├── services/        # Business logic services
 └── index.js         # Application entry point
 ```
 
